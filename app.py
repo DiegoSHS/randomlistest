@@ -29,12 +29,6 @@ def relate_elements_to_groups(elements_list, groups):
     return related_groups
 
 
-def display_elements(elements, label):
-    st.subheader(f'{label}:')
-    st.data_editor({label: elements}, use_container_width=True)
-    st.dataframe(elements, width=700, height=300)
-
-
 def process_elements(elements, related_elements):
     num_groups = len(related_elements)
     if len(elements) < num_groups:
@@ -55,15 +49,18 @@ def process_elements(elements, related_elements):
 def main():
     st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
 
-    elements = st.data_editor({'Elementos': []}, use_container_width=True)
-    related_elements = st.data_editor({'Elementos Relacionados': []}, use_container_width=True)
+    elements = st.experimental_data_editor([], use_container_width=True, key='elements_editor')
+    related_elements = st.experimental_data_editor([], use_container_width=True, key='related_elements_editor')
 
     if elements and related_elements:
-        display_elements(elements['Elementos'], 'Elementos añadidos')
-        display_elements(related_elements['Elementos Relacionados'], 'Elementos relacionados añadidos')
+        st.subheader('Elementos añadidos:')
+        st.dataframe(elements, width=700, height=300, num_rows="dynamic")
+
+        st.subheader('Elementos relacionados añadidos:')
+        st.dataframe(related_elements, width=700, height=300, num_rows="dynamic")
 
         if st.button('Procesar'):
-            process_elements(elements['Elementos'], related_elements['Elementos Relacionados'])
+            process_elements(elements, related_elements)
     else:
         st.warning('Ingrese ambas listas para proceder.')
 
