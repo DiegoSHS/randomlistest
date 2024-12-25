@@ -49,9 +49,9 @@ def process_elements(elements, related_elements):
 
 def main():
     st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
-    st.subheader('Elementos añadidos:')
+    st.subheader('Elementos añadidos')
     elements = st.data_editor(["Default"], num_rows="dynamic", use_container_width=True, key='elements_editor')
-    st.subheader('Elementos relacionados añadidos:')
+    st.subheader('Elementos relacionados añadidos')
     related_elements = st.data_editor(["Default1"], num_rows="dynamic", use_container_width=True, key='related_elements_editor')
 
     button_disabled = not (elements and related_elements)
