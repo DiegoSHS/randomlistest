@@ -29,16 +29,10 @@ def relate_elements_to_groups(elements_list, groups):
     return related_groups
 
 
-def display_elements(elements):
-    st.subheader('Elementos añadidos:')
-    st.data_editor({'Elementos': elements}, use_container_width=True)
+def display_elements(elements, label):
+    st.subheader(f'{label}:')
+    st.data_editor({label: elements}, use_container_width=True)
     st.dataframe(elements, width=700, height=300)
-
-
-def display_related_elements(related_elements):
-    st.subheader('Elementos relacionados añadidos:')
-    st.data_editor({'Elementos Relacionados': related_elements}, use_container_width=True)
-    st.dataframe(related_elements, width=700, height=300)
 
 
 def process_elements(elements, related_elements):
@@ -65,8 +59,8 @@ def main():
     related_elements = st.data_editor({'Elementos Relacionados': []}, use_container_width=True)
 
     if elements and related_elements:
-        display_elements(elements['Elementos'])
-        display_related_elements(related_elements['Elementos Relacionados'])
+        display_elements(elements['Elementos'], 'Elementos añadidos')
+        display_elements(related_elements['Elementos Relacionados'], 'Elementos relacionados añadidos')
 
         if st.button('Procesar'):
             process_elements(elements['Elementos'], related_elements['Elementos Relacionados'])
