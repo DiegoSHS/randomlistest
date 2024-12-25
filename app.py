@@ -37,8 +37,7 @@ def process_elements(elements, related_elements):
         groups = shuffle_and_divide_list(elements, num_groups)
         related_groups = relate_elements_to_groups(related_elements, groups)
 
-        st.write(f'Número total de elementos: {len(elements)}')
-        st.write(f'Número de sublistas: {num_groups}')
+        st.subheader('Resultados')
 
         results = [{"Grupo": idx + 1, "Elementos": group, "Relacionado con": related_group["related_element"]}
                    for idx, (group, related_group) in enumerate(zip(groups, related_groups))]
