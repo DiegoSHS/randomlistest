@@ -1,5 +1,6 @@
 import streamlit as st
 import random
+import pandas as pd
 
 def shuffle_and_divide_list(original_list, num_groups):
     random.shuffle(original_list)
@@ -34,14 +35,14 @@ related_elements_list = st.text_area('Ingrese la lista de elementos relacionados
 if input_list:
     elements = [item.strip() for item in input_list.split(',') if item.strip()]
     st.subheader('Elementos añadidos:')
-    for element in elements:
-        st.write(f"• {element}")
+    elements_df = pd.DataFrame(elements, columns=["Elementos"])
+    st.dataeditor(elements_df, editable=True)
 
 if related_elements_list:
     related_elements = [item.strip() for item in related_elements_list.split(',') if item.strip()]
     st.subheader('Elementos relacionados añadidos:')
-    for related_element in related_elements:
-        st.write(f"• {related_element}")
+    related_elements_df = pd.DataFrame(related_elements, columns=["Elementos Relacionados"])
+    st.dataeditor(related_elements_df, editable=True)
 
 if input_list and related_elements_list:
     num_groups = len(related_elements)
