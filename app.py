@@ -31,11 +31,13 @@ def relate_elements_to_groups(elements_list, groups):
 
 def display_elements(elements):
     st.subheader('Elementos añadidos:')
+    st.data_editor({'Elementos': elements}, use_container_width=True)
     st.dataframe(elements, width=700, height=300)
 
 
 def display_related_elements(related_elements):
     st.subheader('Elementos relacionados añadidos:')
+    st.data_editor({'Elementos Relacionados': related_elements}, use_container_width=True)
     st.dataframe(related_elements, width=700, height=300)
 
 
@@ -59,26 +61,15 @@ def process_elements(elements, related_elements):
 def main():
     st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
 
-    input_list = st.text_area('Ingrese la lista de elementos separada por comas:')
-    related_elements_list = st.text_area('Ingrese la lista de elementos relacionados separada por comas:')
+    elements = st.data_editor({'Elementos': []}, use_container_width=True)
+    related_elements = st.data_editor({'Elementos Relacionados': []}, use_container_width=True)
 
-    if input_list:
-        elements = [item.strip() for item in input_list.split(',') if item.strip()]
-        if elements:
-            display_elements(elements)
-        else:
-            st.error('La lista de elementos no puede estar vacía.')
+    if elements and related_elements:
+        display_elements(elements['Elementos'])
+        display_related_elements(related_elements['Elementos Relacionados'])
 
-    if related_elements_list:
-        related_elements = [item.strip() for item in related_elements_list.split(',') if item.strip()]
-        if related_elements:
-            display_related_elements(related_elements)
-        else:
-            st.error('La lista de elementos relacionados no puede estar vacía.')
-
-    if input_list and related_elements_list:
         if st.button('Procesar'):
-            process_elements(elements, related_elements)
+            process_elements(elements['Elementos'], related_elements['Elementos Relacionados'])
     else:
         st.warning('Ingrese ambas listas para proceder.')
 
