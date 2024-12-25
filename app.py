@@ -31,20 +31,22 @@ st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
 input_list = st.text_area('Ingrese la lista de elementos separada por comas:')
 related_elements_list = st.text_area('Ingrese la lista de elementos relacionados separada por comas:')
 
-num_groups = st.number_input('Ingrese el número de sublistas:', min_value=1, max_value=len(input_list.split(',')), value=2)
-
-if st.button('Procesar'):
-    elements = [item.strip() for item in input_list.split('\n') if item.strip()]
-    related_elements = [item.strip() for item in related_elements_list.split('\n') if item.strip()]
+if input_list and related_elements_list:
+    elements = [item.strip() for item in input_list.split(',') if item.strip()]
+    related_elements = [item.strip() for item in related_elements_list.split(',') if item.strip()]
+    num_groups = st.number_input('Ingrese el número de sublistas:', min_value=1, max_value=len(elements), value=2)
     
-    if elements and related_elements and num_groups > 0 and len(related_elements) == num_groups:
-        groups = shuffle_and_divide_list(elements, num_groups)
-        related_groups = relate_elements_to_groups(related_elements, groups)
-        
-        st.write(f'Número total de elementos: {len(elements)}')
-        st.write(f'Número de sublistas: {num_groups}')
-        
-        for idx, related_group in enumerate(related_groups):
-            st.write(f'Grupo {idx + 1}: {related_group["group"]}, Relacionado con: {related_group["related_element"]}')
-    else:
-        st.error('Asegúrese de que la lista de elementos relacionados tenga el mismo tamaño que el número de sublistas.')
+    if st.button('Procesar'):
+        if elements and related_elements and num_groups > 0 and len(related_elements) == num_groups:
+            groups = shuffle_and_divide_list(elements, num_groups)
+            related_groups = relate_elements_to_groups(related_elements, groups)
+            
+            st.write(f'Número total de elementos: {len(elements)}')
+            st.write(f'Número de sublistas: {num_groups}')
+            
+            for idx, related_group in enumerate(related_groups):
+                st.write(f'Grupo {idx + 1}: {related_group["group"]}, Relacionado con: {related_group["related_element"]}')
+        else:
+            st.error('Asegúrese de que la lista de elementos relacionados tenga el mismo tamaño que el número de sublistas.')
+else:
+    st.warning('Ingrese ambas listas para proceder.')
