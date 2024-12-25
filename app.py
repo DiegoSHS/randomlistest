@@ -34,21 +34,29 @@ related_elements_list = st.text_area('Ingrese la lista de elementos relacionados
 
 if input_list:
     elements = [item.strip() for item in input_list.split(',') if item.strip()]
-    st.subheader('Elementos añadidos:')
-    elements_df = pd.DataFrame(elements, columns=["Elementos"])
-    st.dataeditor(elements_df, editable=True)
+    if elements:
+        st.subheader('Elementos añadidos:')
+        elements_df = pd.DataFrame(elements, columns=["Elementos"])
+        st.data_editor(elements_df, editable=True)
+    else:
+        st.error('La lista de elementos no puede estar vacía.')
 
 if related_elements_list:
     related_elements = [item.strip() for item in related_elements_list.split(',') if item.strip()]
-    st.subheader('Elementos relacionados añadidos:')
-    related_elements_df = pd.DataFrame(related_elements, columns=["Elementos Relacionados"])
-    st.dataeditor(related_elements_df, editable=True)
+    if related_elements:
+        st.subheader('Elementos relacionados añadidos:')
+        related_elements_df = pd.DataFrame(related_elements, columns=["Elementos Relacionados"])
+        st.data_editor(related_elements_df, editable=True)
+    else:
+        st.error('La lista de elementos relacionados no puede estar vacía.')
 
 if input_list and related_elements_list:
     num_groups = len(related_elements)
     
     if st.button('Procesar'):
-        if elements and related_elements and num_groups > 0 and len(related_elements) == num_groups:
+        if len(elements) < num_groups:
+            st.error('La lista de elementos debe ser al menos del tamaño de la lista de elementos relacionados.')
+        elif elements and related_elements and num_groups > 0 and len(related_elements) == num_groups:
             groups = shuffle_and_divide_list(elements, num_groups)
             related_groups = relate_elements_to_groups(related_elements, groups)
             
