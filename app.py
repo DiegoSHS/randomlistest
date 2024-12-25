@@ -10,7 +10,7 @@ def install_tesseract():
         os.system('apt update')
         os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
         # Configuración de pytesseract después de la instalación
-        pytesseract.pytesseract.tesseract_cmd = r'Tesseract-OCR/tesseract'  # Cambia esto si tienes tesseract en una ruta diferente
+        
     except Exception as e:
         st.error(f'Error durante la instalación de Tesseract: {str(e)}')
 
