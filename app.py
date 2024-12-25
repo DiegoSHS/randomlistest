@@ -1,12 +1,16 @@
 import streamlit as st
 import random
 import os
+import pytesseract
+from PIL import Image
+import io
 
+# Configuración de pytesseract
+pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'  # Cambia esto si tienes tesseract en una ruta diferente
 
 def install_tesseract():
     os.system('apt update')
     os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
-
 
 def shuffle_and_divide_list(original_list, num_groups):
     random.shuffle(original_list)
@@ -24,7 +28,6 @@ def shuffle_and_divide_list(original_list, num_groups):
 
     return groups
 
-
 def relate_elements_to_groups(elements_list, groups):
     related_groups = []
     for i, group in enumerate(groups):
@@ -34,6 +37,9 @@ def relate_elements_to_groups(elements_list, groups):
         })
     return related_groups
 
+def extract_text_from_image(image):
+    text = pytesseract.image_to_string(image)
+    return text
 
 def process_elements(elements, related_elements):
     num_groups = len(related_elements)
@@ -52,7 +58,6 @@ def process_elements(elements, related_elements):
     else:
         st.error('Asegúrese de que la lista de elementos relacionados tenga el mismo tamaño que el número de sublistas.')
 
-
 def main():
     st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
     st.subheader('Foto')
@@ -61,6 +66,11 @@ def main():
 
     if picture:
         st.image(picture)
+        image = Image.open(io.BytesIO(picture.getvalue()))
+        text = extract_text_from_image(image)
+        st.subheader('Texto extraído de la imagen')
+        st.text(text)
+        
         st.subheader('Elementos añadidos')
         elements = st.data_editor(["Default"], num_rows="dynamic", use_container_width=True, key='elements_editor')
     st.subheader('Elementos relacionados añadidos')
@@ -72,7 +82,6 @@ def main():
 
     if button_disabled:
         st.warning('Ingrese ambas listas para proceder.')
-
 
 if __name__ == "__main__":
     install_tesseract()
