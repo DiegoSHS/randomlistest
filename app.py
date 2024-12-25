@@ -40,8 +40,10 @@ def process_elements(elements, related_elements):
         st.write(f'Número total de elementos: {len(elements)}')
         st.write(f'Número de sublistas: {num_groups}')
 
-        for idx, related_group in enumerate(related_groups):
-            st.write(f'Grupo {idx + 1}: {related_group["group"]}, Relacionado con: {related_group["related_element"]}')
+        results = [{"Grupo": idx + 1, "Elementos": group, "Relacionado con": related_group["related_element"]}
+                   for idx, (group, related_group) in enumerate(zip(groups, related_groups))]
+        
+        st.dataframe(results)
     else:
         st.error('Asegúrese de que la lista de elementos relacionados tenga el mismo tamaño que el número de sublistas.')
 
