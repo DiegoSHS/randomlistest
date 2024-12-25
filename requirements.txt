@@ -30,6 +30,7 @@ pydeck==0.9.1
 Pygments==2.18.0
 pynndescent==0.5.13
 pyparsing==3.1.2
+pytesseract==0.3.13
 python-dateutil==2.9.0.post0
 pytz==2024.1
 referencing==0.35.1
