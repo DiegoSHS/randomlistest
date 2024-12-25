@@ -5,13 +5,12 @@ import pytesseract
 from PIL import Image, UnidentifiedImageError
 import io
 
-# Configuración de pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'  # Cambia esto si tienes tesseract en una ruta diferente
-
 def install_tesseract():
     try:
         os.system('apt update')
         os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
+        # Configuración de pytesseract después de la instalación
+        pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'  # Cambia esto si tienes tesseract en una ruta diferente
     except Exception as e:
         st.error(f'Error durante la instalación de Tesseract: {str(e)}')
 
@@ -108,5 +107,4 @@ def main():
         st.warning('Ingrese ambas listas para proceder.')
 
 if __name__ == "__main__":
-    install_tesseract()
-    main()
+    install_tesseract
