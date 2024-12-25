@@ -31,9 +31,19 @@ st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
 input_list = st.text_area('Ingrese la lista de elementos separada por comas:')
 related_elements_list = st.text_area('Ingrese la lista de elementos relacionados separada por comas:')
 
-if input_list and related_elements_list:
+if input_list:
     elements = [item.strip() for item in input_list.split(',') if item.strip()]
+    st.subheader('Elementos añadidos:')
+    for element in elements:
+        st.write(f"• {element}")
+
+if related_elements_list:
     related_elements = [item.strip() for item in related_elements_list.split(',') if item.strip()]
+    st.subheader('Elementos relacionados añadidos:')
+    for related_element in related_elements:
+        st.write(f"• {related_element}")
+
+if input_list and related_elements_list:
     num_groups = st.number_input('Ingrese el número de sublistas:', min_value=1, max_value=len(elements), value=2)
     
     if st.button('Procesar'):
