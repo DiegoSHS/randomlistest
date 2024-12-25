@@ -1,6 +1,5 @@
 import streamlit as st
 import random
-import pandas as pd
 
 def shuffle_and_divide_list(original_list, num_groups):
     random.shuffle(original_list)
@@ -36,8 +35,7 @@ if input_list:
     elements = [item.strip() for item in input_list.split(',') if item.strip()]
     if elements:
         st.subheader('Elementos añadidos:')
-        elements_df = pd.DataFrame(elements, columns=["Elementos"])
-        st.data_editor(elements_df, editable=True)
+        st.dataframe(elements, width=700, height=300)
     else:
         st.error('La lista de elementos no puede estar vacía.')
 
@@ -45,8 +43,7 @@ if related_elements_list:
     related_elements = [item.strip() for item in related_elements_list.split(',') if item.strip()]
     if related_elements:
         st.subheader('Elementos relacionados añadidos:')
-        related_elements_df = pd.DataFrame(related_elements, columns=["Elementos Relacionados"])
-        st.data_editor(related_elements_df, editable=True)
+        st.dataframe(related_elements, width=700, height=300)
     else:
         st.error('La lista de elementos relacionados no puede estar vacía.')
 
