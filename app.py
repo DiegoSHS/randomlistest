@@ -48,17 +48,12 @@ def process_elements(elements, related_elements):
 
 def main():
     st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
-
+    st.subheader('Elementos añadidos:')
     elements = st.data_editor([], num_rows="dynamic", use_container_width=True, key='elements_editor')
+    st.subheader('Elementos relacionados añadidos:')
     related_elements = st.data_editor([], num_rows="dynamic", use_container_width=True, key='related_elements_editor')
 
-    if elements and related_elements:
-        st.subheader('Elementos añadidos:')
-        st.dataframe(elements, width=700, height=300, num_rows="dynamic")
-
-        st.subheader('Elementos relacionados añadidos:')
-        st.dataframe(related_elements, width=700, height=300, num_rows="dynamic")
-
+    if elements and related_elements:      
         if st.button('Procesar'):
             process_elements(elements, related_elements)
     else:
