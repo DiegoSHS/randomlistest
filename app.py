@@ -55,32 +55,8 @@ def main():
     st.subheader('Elementos relacionados añadidos:')
     related_elements = st.data_editor(["Default1"], num_rows="dynamic", use_container_width=True, key='related_elements_editor')
 
-    st.markdown(
-        """
-        <style>
-        .floating-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 12px;
-            z-index: 1000;
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
-
     button_disabled = not (elements and related_elements)
-    if st.button('Procesar', disabled=button_disabled, key='process_button', css_class='floating-button'):
+    if st.button('Procesar', disabled=button_disabled, key='process_button'):
         process_elements(elements, related_elements)
 
     if button_disabled:
