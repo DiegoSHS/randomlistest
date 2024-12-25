@@ -44,7 +44,7 @@ if related_elements_list:
         st.write(f"• {related_element}")
 
 if input_list and related_elements_list:
-    num_groups = st.number_input('Ingrese el número de sublistas:', min_value=1, max_value=len(elements), value=2)
+    num_groups = len(related_elements)
     
     if st.button('Procesar'):
         if elements and related_elements and num_groups > 0 and len(related_elements) == num_groups:
