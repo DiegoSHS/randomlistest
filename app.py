@@ -1,5 +1,11 @@
 import streamlit as st
 import random
+import os
+
+
+def install_tesseract():
+    os.system('apt update')
+    os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
 
 
 def shuffle_and_divide_list(original_list, num_groups):
@@ -69,4 +75,5 @@ def main():
 
 
 if __name__ == "__main__":
+    install_tesseract()
     main()
