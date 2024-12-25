@@ -2,17 +2,23 @@ import streamlit as st
 import random
 import os
 import pytesseract
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import io
 
 # Configuración de pytesseract
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'  # Cambia esto si tienes tesseract en una ruta diferente
 
 def install_tesseract():
-    os.system('apt update')
-    os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
+    try:
+        os.system('apt update')
+        os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
+    except Exception as e:
+        st.error(f'Error durante la instalación de Tesseract: {str(e)}')
 
 def shuffle_and_divide_list(original_list, num_groups):
+    if not isinstance(original_list, list) or not isinstance(num_groups, int):
+        raise ValueError("Invalid input types for shuffle_and_divide_list")
+    
     random.shuffle(original_list)
     group_size = len(original_list) // num_groups
     remainder = len(original_list) % num_groups
@@ -29,6 +35,9 @@ def shuffle_and_divide_list(original_list, num_groups):
     return groups
 
 def relate_elements_to_groups(elements_list, groups):
+    if not isinstance(elements_list, list) or not isinstance(groups, list):
+        raise ValueError("Invalid input types for relate_elements_to_groups")
+    
     related_groups = []
     for i, group in enumerate(groups):
         related_groups.append({
@@ -38,10 +47,22 @@ def relate_elements_to_groups(elements_list, groups):
     return related_groups
 
 def extract_text_from_image(image):
-    text = pytesseract.image_to_string(image)
-    return text
+    try:
+        text = pytesseract.image_to_string(image)
+        return text
+    except Exception as e:
+        st.error(f'Error al extraer texto de la imagen: {str(e)}')
+        return ""
 
 def process_elements(elements, related_elements):
+    if not all(isinstance(el, str) for el in elements):
+        st.error('Todos los elementos deben ser cadenas.')
+        return
+
+    if not all(isinstance(rel_el, str) for rel_el in related_elements):
+        st.error('Todos los elementos relacionados deben ser cadenas.')
+        return
+
     num_groups = len(related_elements)
     if len(elements) < num_groups:
         st.error('La lista de elementos debe ser al menos del tamaño de la lista de elementos relacionados.')
@@ -66,10 +87,13 @@ def main():
 
     if picture:
         st.image(picture)
-        image = Image.open(io.BytesIO(picture.getvalue()))
-        text = extract_text_from_image(image)
-        st.subheader('Texto extraído de la imagen')
-        st.text(text)
+        try:
+            image = Image.open(io.BytesIO(picture.getvalue()))
+            text = extract_text_from_image(image)
+            st.subheader('Texto extraído de la imagen')
+            st.text(text)
+        except UnidentifiedImageError:
+            st.error('La imagen cargada no es válida.')
         
         st.subheader('Elementos añadidos')
         elements = st.data_editor(["Default"], num_rows="dynamic", use_container_width=True, key='elements_editor')
