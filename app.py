@@ -107,4 +107,5 @@ def main():
         st.warning('Ingrese ambas listas para proceder.')
 
 if __name__ == "__main__":
-    install_tesseract
+    install_tesseract()
+    main()
