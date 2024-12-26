@@ -1,18 +1,9 @@
 import streamlit as st
 import random
 import os
-import pytesseract
+import requests
 from PIL import Image, UnidentifiedImageError
 import io
-
-def install_tesseract():
-    try:
-        os.system('apt update')
-        os.system('apt install -y tesseract-ocr libtesseract-dev libleptonica-dev pkg-config')
-        # Configuración de pytesseract después de la instalación
-        
-    except Exception as e:
-        st.error(f'Error durante la instalación de Tesseract: {str(e)}')
 
 def shuffle_and_divide_list(original_list, num_groups):
     if not isinstance(original_list, list) or not isinstance(num_groups, int):
@@ -47,7 +38,12 @@ def relate_elements_to_groups(elements_list, groups):
 
 def extract_text_from_image(image):
     try:
-        text = pytesseract.image_to_string(image)
+        buffered = io.BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = buffered.getvalue()
+        response = requests.post("https://nextjsocr.vercel.app/ocr", files={"image": img_str})
+        response.raise_for_status()
+        text = response.json().get("text", "")
         return text
     except Exception as e:
         st.error(f'Error al extraer texto de la imagen: {str(e)}')
@@ -107,5 +103,4 @@ def main():
         st.warning('Ingrese ambas listas para proceder.')
 
 if __name__ == "__main__":
-    install_tesseract()
     main()
