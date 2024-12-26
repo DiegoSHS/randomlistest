@@ -36,14 +36,24 @@ def relate_elements_to_groups(elements_list, groups):
         })
     return related_groups
 
+def format_image(image):
+    buffered = io.BytesIO()
+    image.save(buffered, format="JPEG")
+    img_str = buffered.getvalue()
+    return img_str
+
+def send_image_to_api(img_str):
+    form_data = {
+        'image': ('image.jpg', img_str, 'image/jpeg')
+    }
+    response = requests.post("https://nextjsocr.vercel.app/ocr", files=form_data)
+    response.raise_for_status()
+    return response.json().get("text", "")
+
 def extract_text_from_image(image):
     try:
-        buffered = io.BytesIO()
-        image.save(buffered, format="JPEG")
-        img_str = buffered.getvalue()
-        response = requests.post("https://nextjsocr.vercel.app/ocr", files={"image": img_str})
-        response.raise_for_status()
-        text = response.json().get("text", "")
+        img_str = format_image(image)
+        text = send_image_to_api(img_str)
         return text
     except Exception as e:
         st.error(f'Error al extraer texto de la imagen: {str(e)}')
