@@ -90,8 +90,8 @@ def main():
         except UnidentifiedImageError:
             st.error('La imagen cargada no es válida.')
         
-        st.subheader('Elementos añadidos')
-        elements = st.data_editor(["Default"], num_rows="dynamic", use_container_width=True, key='elements_editor')
+    st.subheader('Elementos añadidos')
+    elements = st.data_editor(["Default"], num_rows="dynamic", use_container_width=True, key='elements_editor')
     st.subheader('Elementos relacionados añadidos')
     related_elements = st.data_editor(["Default1"], num_rows="dynamic", use_container_width=True, key='related_elements_editor')
 
