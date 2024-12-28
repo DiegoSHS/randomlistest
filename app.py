@@ -73,7 +73,7 @@ def send_image_to_api(img_str: str):
             return ""
         return text
     except requests.exceptions.HTTPError as e:
-        st.error(f'Error al en el servidor: {str(e)}')
+        st.error(f'Error en el servidor: {str(e)}')
         return ""
     except requests.exceptions.ConnectionError:
         st.error(f'Error de conexión con el servidor')
