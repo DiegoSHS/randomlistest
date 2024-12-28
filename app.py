@@ -95,7 +95,7 @@ def main():
     if picture:
         st.image(picture)
         try:
-            image = Image.open(picture.getvalue())
+            image = Image.open(io.BytesIO(picture.getvalue()))
             text = extract_text_from_image(image)
             st.subheader('Texto extraído de la imagen')
             st.text(text)
