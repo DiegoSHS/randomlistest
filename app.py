@@ -2,7 +2,9 @@ import streamlit as st
 import random
 import os
 import requests
+import base64
 from PIL import Image, UnidentifiedImageError
+from PIL.ImageFile import ImageFile
 import io
 
 def shuffle_and_divide_list(original_list, num_groups):
@@ -36,21 +38,21 @@ def relate_elements_to_groups(elements_list, groups):
         })
     return related_groups
 
-def format_image(image):
+def format_image(image: ImageFile):
     buffered = io.BytesIO()
     image.save(buffered, format="JPEG")
     img_str = buffered.getvalue()
-    return img_str
+    image_base64 = base64.b64encode(img_str).decode('utf-8')
+    return image_base64
 
 def send_image_to_api(img_str):
-    form_data = {
-        'image': ('image.jpg', img_str, 'image/jpeg')
-    }
-    response = requests.post("https://nextjsocr.vercel.app/ocr", files=form_data)
+    json_data = {"image": img_str}
+    response = requests.post("https://nextjsocr.vercel.app/ocr", json=json_data)
     response.raise_for_status()
+    print(response.json())
     return response.json().get("text", "")
 
-def extract_text_from_image(image):
+def extract_text_from_image(image: ImageFile):
     try:
         img_str = format_image(image)
         text = send_image_to_api(img_str)
@@ -93,7 +95,7 @@ def main():
     if picture:
         st.image(picture)
         try:
-            image = Image.open(io.BytesIO(picture.getvalue()))
+            image = Image.open(picture.getvalue())
             text = extract_text_from_image(image)
             st.subheader('Texto extraído de la imagen')
             st.text(text)
