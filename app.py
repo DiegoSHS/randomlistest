@@ -1,11 +1,10 @@
 import streamlit as st
 import random
-import os
 import requests
-import base64
+from base64 import b64encode
+from io import BytesIO
 from PIL import Image, UnidentifiedImageError
 from PIL.ImageFile import ImageFile
-import io
 
 def shuffle_and_divide_list(original_list, num_groups):
     if not isinstance(original_list, list) or not isinstance(num_groups, int):
@@ -39,18 +38,26 @@ def relate_elements_to_groups(elements_list, groups):
     return related_groups
 
 def format_image(image: ImageFile):
-    buffered = io.BytesIO()
-    image.save(buffered, format="JPEG")
-    img_str = buffered.getvalue()
-    image_base64 = base64.b64encode(img_str).decode('utf-8')
-    return image_base64
+    try:
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        img_str = buffered.getvalue()
+        image_base64 = b64encode(img_str).decode('utf-8')
+        return image_base64
+    except Exception as e:
+        st.error(f'Error al formatear la imagen: {str(e)}')
+        return ""
 
 def send_image_to_api(img_str):
-    json_data = {"image": img_str}
-    response = requests.post("https://nextjsocr.vercel.app/ocr", json=json_data)
-    response.raise_for_status()
-    print(response.json())
-    return response.json().get("text", "")
+    try:
+        json_data = {"image": img_str}
+        response = requests.post("https://nextjsocr.vercel.app/ocr", json=json_data)
+        response.raise_for_status()
+        print(response.json())
+        return response.json().get("text", "")
+    except requests.exceptions.RequestException as e:
+        st.error(f'Error al enviar la imagen al servidor: {str(e)}')
+        return ""
 
 def extract_text_from_image(image: ImageFile):
     try:
@@ -95,7 +102,7 @@ def main():
     if picture:
         st.image(picture)
         try:
-            image = Image.open(io.BytesIO(picture.getvalue()))
+            image = Image.open(BytesIO(picture.getvalue()))
             text = extract_text_from_image(image)
             st.subheader('Texto extraído de la imagen')
             st.text(text)
