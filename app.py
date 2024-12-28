@@ -44,29 +44,51 @@ def format_image(image: ImageFile):
         img_str = buffered.getvalue()
         image_base64 = b64encode(img_str).decode('utf-8')
         return image_base64
+    except OSError:
+        st.error(f'Error, la imagen no puede ser guardada')
+        return ""
     except Exception as e:
         st.error(f'Error al formatear la imagen: {str(e)}')
         return ""
 
-def send_image_to_api(img_str):
+def decode_response(Response: requests.Response):
+    try:
+        decoded_json: dict = Response.json()
+        return decoded_json
+    except requests.exceptions.JSONDecodeError:
+        st.error(f'Error al decodificar el JSON')
+        return {}
+    except requests.exceptions.InvalidJSONError:
+        st.error(f'Error al decodificar, json inválido')
+        return {}
+
+def send_image_to_api(img_str: str):
     try:
         json_data = {"image": img_str}
         response = requests.post("https://nextjsocr.vercel.app/ocr", json=json_data)
         response.raise_for_status()
-        print(response.json())
-        return response.json().get("text", "")
+        decoded_data = decode_response(response)
+        text: str = decoded_data.get("text", "")
+        if type(text) is not str:
+            return ""
+        return text
+    except requests.exceptions.HTTPError as e:
+        st.error(f'Error al en el servidor: {str(e)}')
+        return ""
+    except requests.exceptions.ConnectionError:
+        st.error(f'Error de conexión con el servidor')
+        return ""
+    except requests.exceptions.Timeout:
+        st.error(f'Tiempo de espera agotado')
+        return ""
     except requests.exceptions.RequestException as e:
         st.error(f'Error al enviar la imagen al servidor: {str(e)}')
         return ""
 
 def extract_text_from_image(image: ImageFile):
-    try:
-        img_str = format_image(image)
-        text = send_image_to_api(img_str)
-        return text
-    except Exception as e:
-        st.error(f'Error al extraer texto de la imagen: {str(e)}')
-        return ""
+    img_str = format_image(image)
+    text = send_image_to_api(img_str)
+    return text
 
 def process_elements(elements, related_elements):
     if not all(isinstance(el, str) for el in elements):
