@@ -65,15 +65,16 @@ def decode_response(Response: requests.Response):
 def send_image_to_api(img_str: str):
     try:
         json_data = {"image": img_str}
-        response = requests.post("https://nextjsocr.vercel.app/ocr", json=json_data)
+        response = requests.post("http://localhost:3000/ocr", json=json_data)
+        print(response)
         response.raise_for_status()
         decoded_data = decode_response(response)
         text: str = decoded_data.get("text", "")
         if type(text) is not str:
             return ""
         return text
-    except requests.exceptions.HTTPError as e:
-        st.error(f'Error en el servidor: {str(e)}')
+    except requests.exceptions.HTTPError:
+        st.error(f'Error en el servidor')
         return ""
     except requests.exceptions.ConnectionError:
         st.error(f'Error de conexión con el servidor')
@@ -81,8 +82,8 @@ def send_image_to_api(img_str: str):
     except requests.exceptions.Timeout:
         st.error(f'Tiempo de espera agotado')
         return ""
-    except requests.exceptions.RequestException as e:
-        st.error(f'Error al enviar la imagen al servidor: {str(e)}')
+    except requests.exceptions.RequestException:
+        st.error(f'Error al enviar la imagen al servidor')
         return ""
 
 def extract_text_from_image(image: ImageFile):
@@ -118,10 +119,19 @@ def process_elements(elements, related_elements):
 def main():
     st.title('Dividir Lista en Sublistas Aleatorias y Relacionarlas')
     st.subheader('Foto')
-    enable = st.checkbox("Enable camera")
-    picture = st.camera_input("Take a picture", disabled=not enable)
-
-    if picture:
+    enable = st.checkbox("Encender cámara")
+    picture = st.camera_input("Toma una foto", disabled=not enable)
+    uploaded_file = st.file_uploader("Upload a picture", type=["jpg", "jpeg", "png"])
+    if uploaded_file:
+        try:
+            image = Image.open(BytesIO(uploaded_file.getvalue()))
+            st.image(image)
+            text = extract_text_from_image(image)
+            st.subheader('Texto extraído de la imagen')
+            st.text(text)
+        except FileNotFoundError:
+            st.error('No se encontró la imagen de prueba.')
+    elif picture:
         st.image(picture)
         try:
             image = Image.open(BytesIO(picture.getvalue()))

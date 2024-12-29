@@ -1,1 +1,7 @@
+# virtualenv
 .venv
+
+# test images
+*.png
+*.jpg
+*.jpeg
