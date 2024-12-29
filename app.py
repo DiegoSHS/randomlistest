@@ -1,10 +1,13 @@
 import streamlit as st
 import random
 import requests
+import os
 from base64 import b64encode
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
 from PIL.ImageFile import ImageFile
+
+API_URL = os.getenv("API_URL", "http://localhost:3000/ocr")
 
 def shuffle_and_divide_list(original_list, num_groups):
     if not isinstance(original_list, list) or not isinstance(num_groups, int):
@@ -65,7 +68,7 @@ def decode_response(Response: requests.Response):
 def send_image_to_api(img_str: str):
     try:
         json_data = {"image": img_str}
-        response = requests.post("http://localhost:3000/ocr", json=json_data)
+        response = requests.post(API_URL, json=json_data)
         print(response)
         response.raise_for_status()
         decoded_data = decode_response(response)
